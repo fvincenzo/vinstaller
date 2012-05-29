@@ -1,0 +1,4 @@
+This folder contains the Android Root FS. Put here the archive of your
+new version and name it root.tar.gz. Keep in mind to substitute the
+right init.rc with the updated partition table.
+        

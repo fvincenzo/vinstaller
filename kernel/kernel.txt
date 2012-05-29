@@ -1,0 +1,2 @@
+This folder contains the kernel to be installed.
+Put here your new version and name it uImage_Android.
