@@ -1,0 +1,6 @@
+echo ===== Preparing Kernel =====
+fatload usb 0:1 0x800000 /vInstaller/kernel/uImage_Android
+nand erase 0x500000 0x800000
+nand write.jffs2 0x800000 0x500000 0x800000
+setenv bootargs 'console=ttyAMA0,115200 mem=700M noinitrd no_console_suspend androidboot.console=ttyAMA0 android.checkjni=0 root=/dev/mtdblock8 rw rootfstype=yaffs2 rootflags=inband-tags,tags-ecc-off rootdelay=3 video=db9000:1024x768-32@60 init=/init
+savee
