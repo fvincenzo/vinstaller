@@ -28,6 +28,7 @@ then
 	echo "Supported Platforms:"
 	echo "-1340AB"
 	echo "-1340ABC"
+	echo "-1340ABC.ICS"
 	echo "-900_LCAD"
 	echo "-1340_LCAD"
 	echo "Supported NANDs:"
@@ -90,6 +91,32 @@ else
 					echo "-2GB"
 				fi
 				;;
+			-1340ABC.ICS)
+				rm installer/install.sh
+				cp plat/1340ABC.ICS/install.1340ABC.ICS installer/install.sh
+				chmod +x installer/install.sh
+				if [ -n $3 ]
+				then
+					echo "NAND: [ "$3" ]"
+					case $3 in
+						-1GB)
+							rm cmd*
+							cp plat/1340ABC.ICS/1GB/* .
+							./make_scriptcmds
+							;;
+						*)
+							rm cmd*
+							cp plat/1340ABC.ICS/2GB/* .
+							./make_scriptcmds
+							;;
+					esac
+				else
+					echo "NAND dim is required for 1340ABC.ICS."
+					echo "Supported NANDs:"
+					echo "-1GB"
+					echo "-2GB"
+				fi
+				;;
 			-900_LCAD)
 				rm installer/install.sh
 				cp plat/900_LCAD/install.900_LCAD installer/install.sh
@@ -144,6 +171,7 @@ else
 				echo "Supported Platforms:"
 				echo "-1340AB"
 				echo "-1340ABC"
+				echo "-1340ABC.ICS"
 				echo "-900_LCAD"
 				echo "-1340_LCAD"
 				echo "Supported NANDs:"

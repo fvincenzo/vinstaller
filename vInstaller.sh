@@ -29,6 +29,9 @@ SELECT=`zenity --title "Select the Platform to Upgrade" \
 		False "xloader.1340ABC.1GB" False "xloader.1340ABC.2GB" \
 		False "kernel.1340ABC.1GB" False "kernel.1340ABC.2GB" \
 		False "android.1340ABC.1GB" False "android.1340ABC.2GB" \
+		False "xloader.1340ABC.ICS.1GB" False "xloader.1340ABC.ICS.2GB" \
+		False "kernel.1340ABC.ICS.1GB" False "kernel.1340ABC.ICS.2GB" \
+		False "android.1340ABC.ICS.1GB" False "android.1340ABC.ICS.2GB" \
 		False "xloader.1340_LCAD.1GB" False "xloader.1340_LCAD.2GB" \
 		False "kernel.1340_LCAD.1GB" False "kernel.1340_LCAD.2GB" \
 		False "android.1340_LCAD.1GB" False "android.1340_LCAD.2GB" \
@@ -94,6 +97,36 @@ case $SELECT in
 	android.1340ABC.2GB)
 		A=-android;
 		B=-1340ABC;
+		C=-2GB;
+		;;
+	xloader.1340ABC.ICS.1GB)
+		A=-xloader;
+		B=-1340ABC.ICS;
+		C=-1GB;
+		;;
+	xloader.1340ABC.ICS.2GB)
+		A=-xloader;
+		B=-1340ABC.ICS;
+		C=-2GB;
+		;;
+	kernel.1340ABC.ICS.1GB)
+		A=-kernel;
+		B=-1340ABC.ICS;
+		C=-1GB;
+		;;
+	kernel.1340ABC.ICS.2GB)
+		A=-kernel;
+		B=-1340ABC.ICS;
+		C=-2GB;
+		;;
+	android.1340ABC.ICS.1GB)
+		A=-android;
+		B=-1340ABC.ICS;
+		C=-1GB;
+		;;
+	android.1340ABC.ICS.2GB)
+		A=-android;
+		B=-1340ABC.ICS;
 		C=-2GB;
 		;;
 	xloader.1340_LCAD.1GB)
