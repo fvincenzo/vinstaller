@@ -25,6 +25,7 @@ then
 	echo "-kernel"
 	echo "-android"
 	echo "-debug"
+	echo "-debug-usb"
 	echo "Supported Platforms:"
 	echo "-1340AB"
 	echo "-1340ABC"
@@ -168,6 +169,7 @@ else
 				echo "-kernel"
 				echo "-android"
 				echo "-debug"
+				echo "-debug-usb"
 				echo "Supported Platforms:"
 				echo "-1340AB"
 				echo "-1340ABC"
@@ -188,6 +190,15 @@ else
 			./make_scriptcmds
 			rm installer/install.sh
 			cp plat/Debug/install.Debug installer/install.sh
+			chmod +x installer/install.sh
+			;;
+		-debug-usb)
+			rm cmd*
+			rm upgrade*
+			cp plat/Debug.usb/Debug/* .
+			./make_scriptcmds
+			rm installer/install.sh
+			cp plat/Debug.usb/install.Debug installer/install.sh
 			chmod +x installer/install.sh
 			;;
 		-xloader)

@@ -36,7 +36,8 @@ SELECT=`zenity --title "Select the Platform to Upgrade" \
 		False "kernel.1340_LCAD.1GB" False "kernel.1340_LCAD.2GB" \
 		False "android.1340_LCAD.1GB" False "android.1340_LCAD.2GB" \
 		False "android.900_LCAD.1GB" \
-		False "debug"`
+		False "debug" \
+		False "debug-usb"`
 
 case $SELECT in
 	xloader.1340AB.1GB)
@@ -166,6 +167,9 @@ case $SELECT in
 		;;
 	debug)
 		A=-debug;
+		;;
+	debug-usb)
+		A=-debug-usb;
 		;;
 	*)
 		;;
