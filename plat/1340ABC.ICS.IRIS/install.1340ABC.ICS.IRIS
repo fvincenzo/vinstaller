@@ -1,0 +1,105 @@
+#!/bin/bash
+#
+# vInstaller an Android upgrade tool.
+# Copyright (C) 2012 Vincenzo Frascino <vincenzo.frascino@st.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+#
+
+# GNU Parted Binary
+PARTED=parted.static
+#PARTED=parted
+
+echo Starting installing procedure for 1340AB_LCAD_IRIS...
+
+sleep 5
+
+echo Erasing and mounting MLC Flash Drive...
+# Search for an USB usable device: the first found is used.
+#for i in {a..z}; do
+for i in {b..z}; do
+	# Create the string for the device to test. 
+	TEST="sd${i}"
+	echo test device: $TEST
+	# Test the Device.
+	TRYDEV=`dmesg | grep "logical blocks" | grep $TEST`
+	# Escape device name in order to be useful with Bash Script.
+	ETRYDEV=`printf %q "$TRYDEV"`
+	if [ -n "$ETRYDEV" ]
+		then
+			USEDEV=$TEST
+			break
+	fi
+done
+
+echo use device: $USEDEV
+
+# Clear the MBR and partition table
+#dd if=/dev/zero of=/dev/$USEDEV bs=512 count=1
+#${PARTED} -s /dev/sda mklabel msdos
+
+# Calculate the total Space on the drive.
+TOTAL=`${PARTED} -s /dev/$USEDEV unit mb print free | grep Free | awk '{print $3}' | cut -d "M" -f1`
+
+echo total space: $TOTAL
+
+# calculate start points
+let BOOT_START=$TOTAL-2*$TOTAL/3
+let ANDROID_START=$BOOT_START+34
+
+# partitions IN ORDER
+${PARTED} -s /dev/sda mkpart primary vfat 0 $BOOT_START
+${PARTED} -s /dev/sda mkpart primary vfat $BOOT_START $ANDROID_START
+${PARTED} -s /dev/sda mkpart primary ext3 $ANDROID_START $TOTAL
+
+sleep 3
+
+# create mounting dirs
+mkdir /media
+mkdir /media/media
+mkdir /media/boot
+mkdir /media/root
+
+# create fs
+mkfs -t vfat /dev/${USEDEV}1 -­n media
+mkfs -t vfat /dev/${USEDEV}2 ­-n boot
+mkfs -t ext3 /dev/${USEDEV}3 ­-L root
+
+sleep 3
+
+# mount fs
+mount -t vfat /dev/${USEDEV}1 /media/media
+mount -t vfat /dev/${USEDEV}2 /media/boot
+mount -t ext3 /dev/${USEDEV}3 /media/root
+
+# copying files
+echo
+echo OK, copying files...
+tar zxvf /mnt/mmc0/vInstaller/rootfs/root.tar.gz -C /media/root
+tar zxvf /mnt/mmc0/vInstaller/rootfs/boot.tar.gz -C /media/boot
+cp /mnt/mmc0/vInstaller/kernel/uImage_Android /media/boot
+
+sleep 5
+
+umount /media/media
+umount /media/boot
+umount /media/root
+
+rm -fr /media/media
+rm -fr /media/boot
+rm -fr /media/root
+rm -fr /media
+
+sync
+
