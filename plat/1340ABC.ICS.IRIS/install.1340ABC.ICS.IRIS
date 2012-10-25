@@ -18,8 +18,8 @@
 #
 
 # GNU Parted Binary
-PARTED=parted.static
-#PARTED=parted
+#PARTED=parted.static
+PARTED=parted
 
 echo Starting installing procedure for 1340AB_LCAD_IRIS...
 
@@ -27,8 +27,8 @@ sleep 5
 
 echo Erasing and mounting MLC Flash Drive...
 # Search for an USB usable device: the first found is used.
-#for i in {a..z}; do
-for i in {b..z}; do
+for i in {a..z}; do
+#for i in {b..z}; do
 	# Create the string for the device to test. 
 	TEST="sd${i}"
 	echo test device: $TEST
@@ -46,8 +46,8 @@ done
 echo use device: $USEDEV
 
 # Clear the MBR and partition table
-#dd if=/dev/zero of=/dev/$USEDEV bs=512 count=1
-#${PARTED} -s /dev/sda mklabel msdos
+dd if=/dev/zero of=/dev/$USEDEV bs=512 count=1
+${PARTED} -s /dev/$USEDEV mklabel msdos
 
 # Calculate the total Space on the drive.
 TOTAL=`${PARTED} -s /dev/$USEDEV unit mb print free | grep Free | awk '{print $3}' | cut -d "M" -f1`
@@ -55,51 +55,56 @@ TOTAL=`${PARTED} -s /dev/$USEDEV unit mb print free | grep Free | awk '{print $3
 echo total space: $TOTAL
 
 # calculate start points
-let BOOT_START=$TOTAL-2*$TOTAL/3
-let ANDROID_START=$BOOT_START+34
+let BOOT_START=200
+let ROOT_START=$BOOT_START+2000
+let STOTAL=$TOTAL-2
 
 # partitions IN ORDER
-${PARTED} -s /dev/sda mkpart primary vfat 0 $BOOT_START
-${PARTED} -s /dev/sda mkpart primary vfat $BOOT_START $ANDROID_START
-${PARTED} -s /dev/sda mkpart primary ext3 $ANDROID_START $TOTAL
+${PARTED} -s /dev/$USEDEV mkpart primary fat32 1 $BOOT_START
+${PARTED} -s /dev/$USEDEV mkpart primary ext2 $BOOT_START $ROOT_START
+${PARTED} -s /dev/$USEDEV mkpart primary ext2 $ROOT_START $STOTAL
 
 sleep 3
 
 # create mounting dirs
-mkdir /media
-mkdir /media/media
-mkdir /media/boot
-mkdir /media/root
+mkdir /mnt/boot
+mkdir /mnt/root
+mkdir /mnt/data
 
 # create fs
-mkfs -t vfat /dev/${USEDEV}1 -­n media
-mkfs -t vfat /dev/${USEDEV}2 ­-n boot
-mkfs -t ext3 /dev/${USEDEV}3 ­-L root
+/root/bin/mkfs.vfat /dev/${USEDEV}1 -n boot
+mkfs.ext3 /dev/${USEDEV}2 -L root -m 1
+mkfs.ext3 /dev/${USEDEV}3 -L data
 
 sleep 3
 
 # mount fs
-mount -t vfat /dev/${USEDEV}1 /media/media
-mount -t vfat /dev/${USEDEV}2 /media/boot
-mount -t ext3 /dev/${USEDEV}3 /media/root
+mount -t vfat /dev/${USEDEV}1 /mnt/boot
+mount -t ext3 /dev/${USEDEV}2 /mnt/root
+mount -t ext3 /dev/${USEDEV}3 /mnt/data
 
 # copying files
 echo
 echo OK, copying files...
-tar zxvf /mnt/mmc0/vInstaller/rootfs/root.tar.gz -C /media/root
-tar zxvf /mnt/mmc0/vInstaller/rootfs/boot.tar.gz -C /media/boot
-cp /mnt/mmc0/vInstaller/kernel/uImage_Android /media/boot
+/root/bin/tar xzvf /mnt/sdcard/vInstaller/rootfs/root.tar.gz -C /mnt/root
+sync
+/root/bin/tar xzvf /mnt/sdcard/vInstaller/rootfs/boot.tar.gz -C /mnt/boot
+sync
+/root/bin/tar xzvf /mnt/sdcard/vInstaller/rootfs/data.tar.gz -C /mnt/data
+sync
 
 sleep 5
 
-umount /media/media
-umount /media/boot
-umount /media/root
+cp /mnt/sdcard/vInstaller/rootfs/init.rc /mnt/root
+cp /mnt/sdcard/vInstaller/rootfs/vold.fstab /mnt/root/system/etc
 
-rm -fr /media/media
-rm -fr /media/boot
-rm -fr /media/root
-rm -fr /media
+umount /mnt/data
+umount /mnt/boot
+umount /mnt/root
+
+rm -fr /mnt/data
+rm -fr /mnt/boot
+rm -fr /mnt/root
 
 sync
 
