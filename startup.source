@@ -19,4 +19,6 @@ chmod +x config.sh
 chmod +x mkimage
 chmod +x vInstaller.sh
 chmod +x make_scriptcmds
+chmod +x convertImage.sh
+chmod +x bootandroid.sh
 

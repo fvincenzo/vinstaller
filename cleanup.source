@@ -16,4 +16,6 @@
 # along with this program.  If not, see .
 #
 rm -fr cmd*
+rm -fr run.txt
+rm -fr plat/BootAndroid/drive/*
 
