@@ -1,0 +1,8 @@
+echo ====== Display Logo =======
+echo fatload mmc 0:1 0xf00000 /vInstaller/ubootimg-8.bmp
+echo bmp info 0xf00000
+echo bmp display 0xf00000
+echo ===== Boot Android... =====
+fatload mmc 0:1 0x0 /vInstaller/run.img
+source 0x0
+
