@@ -26,6 +26,7 @@ then
 	echo "-android"
 	echo "-debug"
 	echo "-debug-usb"
+	echo "-bootandroid"
 	echo "Supported Platforms:"
 	echo "-1340AB"
 	echo "-1340ABC"
@@ -197,6 +198,7 @@ else
 				echo "-android"
 				echo "-debug"
 				echo "-debug-usb"
+				echo "-bootandroid"
 				echo "Supported Platforms:"
 				echo "-1340AB"
 				echo "-1340ABC"
@@ -228,6 +230,14 @@ else
 			rm installer/install.sh
 			cp plat/Debug.usb/install.Debug installer/install.sh
 			chmod +x installer/install.sh
+			;;
+		-bootandroid)
+			rm cmd*
+			rm upgrade*
+			./bootandroid.sh $2
+			cp plat/BootAndroid/drive/* .
+			./make_scriptcmds
+			./convertImage.sh logo.jpg
 			;;
 		-xloader)
 			if [ -e upgrade-x.img ]

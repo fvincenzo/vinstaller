@@ -39,6 +39,7 @@ SELECT=`zenity --title "Select the Platform to Upgrade" \
 		False "kernel.1340_LCAD.1GB" False "kernel.1340_LCAD.2GB" \
 		False "android.1340_LCAD.1GB" False "android.1340_LCAD.2GB" \
 		False "android.900_LCAD.1GB" \
+		False "BootAndroid.usb" False "BootAndroid.mmc" \
 		False "debug" \
 		False "debug-usb"`
 
@@ -197,6 +198,14 @@ case $SELECT in
 		A=-android;
 		B=-900_LCAD;
 		C=-1GB;
+		;;
+	BootAndroid.usb)
+		A=-bootandroid;
+		B=usb
+		;;
+	BootAndroid.mmc)
+		A=-bootandroid;
+		B=mmc
 		;;
 	debug)
 		A=-debug;
