@@ -23,6 +23,8 @@ PARTED=parted
 
 echo Starting installing procedure for 1340AB_LCAD_IRIS...
 
+/mnt/sdcard/vInstaller/lcd/view_script.sh /mnt/sdcard/vInstaller/lcd/vInstaller_start.raw &
+
 sleep 5
 
 echo Erasing and mounting MLC Flash Drive...
@@ -56,7 +58,7 @@ echo total space: $TOTAL
 
 # calculate start points
 let BOOT_START=200
-let ROOT_START=$BOOT_START+2000
+let ROOT_START=$BOOT_START+1000
 let STOTAL=$TOTAL-2
 
 # partitions IN ORDER
@@ -83,6 +85,10 @@ mount -t vfat /dev/${USEDEV}1 /mnt/boot
 mount -t ext3 /dev/${USEDEV}2 /mnt/root
 mount -t ext3 /dev/${USEDEV}3 /mnt/data
 
+killall /mnt/sdcard/vInstaller/lcd/view_script.sh
+
+/mnt/sdcard/vInstaller/lcd/view_script.sh /mnt/sdcard/vInstaller/lcd/vInstaller_50.raw &
+
 # copying files
 echo
 echo OK, copying files...
@@ -108,3 +114,6 @@ rm -fr /mnt/root
 
 sync
 
+killall /mnt/sdcard/vInstaller/lcd/view_script.sh
+
+/mnt/sdcard/vInstaller/lcd/view_script.sh /mnt/sdcard/vInstaller/lcd/vInstaller_end.raw &
