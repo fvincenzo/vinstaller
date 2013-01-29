@@ -59,12 +59,14 @@ echo total space: $TOTAL
 # calculate start points
 let BOOT_START=200
 let ROOT_START=$BOOT_START+1000
+let DATA_START=$ROOT_START+2000
 let STOTAL=$TOTAL-2
 
 # partitions IN ORDER
 ${PARTED} -s /dev/$USEDEV mkpart primary fat32 1 $BOOT_START
 ${PARTED} -s /dev/$USEDEV mkpart primary ext2 $BOOT_START $ROOT_START
-${PARTED} -s /dev/$USEDEV mkpart primary ext2 $ROOT_START $STOTAL
+${PARTED} -s /dev/$USEDEV mkpart primary ext2 $ROOT_START $DATA_START
+${PARTED} -s /dev/$USEDEV mkpart primary fat32 $DATA_START $STOTAL
 
 sleep 3
 
@@ -72,11 +74,13 @@ sleep 3
 mkdir /mnt/boot
 mkdir /mnt/root
 mkdir /mnt/data
+mkdir /mnt/media
 
 # create fs
 /root/bin/mkfs.vfat /dev/${USEDEV}1 -n boot
 mkfs.ext3 /dev/${USEDEV}2 -L root -m 1
 mkfs.ext3 /dev/${USEDEV}3 -L data
+/root/bin/mkfs.vfat /dev/${USEDEV}4 -n media
 
 sleep 3
 
@@ -84,6 +88,7 @@ sleep 3
 mount -t vfat /dev/${USEDEV}1 /mnt/boot
 mount -t ext3 /dev/${USEDEV}2 /mnt/root
 mount -t ext3 /dev/${USEDEV}3 /mnt/data
+mount -t vfat /dev/${USEDEV}4 /mnt/media
 
 killall /mnt/sdcard/vInstaller/lcd/view_script.sh
 
@@ -98,6 +103,8 @@ sync
 sync
 /root/bin/tar xzvf /mnt/sdcard/vInstaller/rootfs/data.tar.gz -C /mnt/data
 sync
+/root/bin/tar xzvf /mnt/sdcard/vInstaller/rootfs/media.tar.gz -C /mnt/media
+sync
 
 sleep 5
 
@@ -107,10 +114,12 @@ cp /mnt/sdcard/vInstaller/rootfs/vold.fstab /mnt/root/system/etc
 umount /mnt/data
 umount /mnt/boot
 umount /mnt/root
+umount /mnt/media
 
 rm -fr /mnt/data
 rm -fr /mnt/boot
 rm -fr /mnt/root
+rm -fr /mnt/media
 
 sync
 
